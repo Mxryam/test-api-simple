@@ -27,9 +27,9 @@ func main() {
 
 	var err error
 	db, err = gorm.Open(sqlite.Open("books.db"), &gorm.Config{})
-	iferr != nil {
-		log.Fatal("faild to connect to database:", err)
-	}
+	if err != nil {
+		log.Fatal("faild to connect to database:", err)}
+	
 	 //مهاجرت دیتابیس
 	 if err := db.AutoMigrate(&Book{});
 	 err != nil {
@@ -85,12 +85,12 @@ func getBookByID(c *gin.Context) {
 	id := c.Param("id")
 	var book Book
 
-if err := db.First(&existing, "id=?", book.ID).Error; err != nil {
+if err := db.First(&book, "id=?",id).Error; err != nil {
 	c.IndentedJSON(http.StatusInternalServerError, gin.H{"message" : "book not found"})
 		return
 
 }
-c.IndentedJSON(http.StatusOK, books)
+c.IndentedJSON(http.StatusOK, book)
 }
 
 func createBook(c *gin.Context) {
@@ -122,7 +122,7 @@ func updateBook(c *gin.Context) {
 	}
 	var book Book
 	if err := db.First(&book, "id = ?" , id).Error; err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message" : :"book not found"})
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message" : "book not found"})
 		return
 	}
 
@@ -139,7 +139,7 @@ func updateBook(c *gin.Context) {
 
 func deleteBook(c *gin.Context){
 	id := c.Param("id")
-	if err := db.Delete(&book{}, "id = ?" , id).Error; err != nil {
+	if err := db.Delete(&Book{}, "id = ?" , id).Error; err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message" : "failed to delete book"})
 		return
 	}
